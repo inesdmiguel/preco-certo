@@ -7,6 +7,7 @@ public class RulesScreen implements Screen{
     private Picture textTitle;
     private Picture textRules;
     private Picture textPressSpace;
+    private boolean requestNext;
 
     //Constructor
     public RulesScreen() {
@@ -14,6 +15,11 @@ public class RulesScreen implements Screen{
         textTitle = new Picture(371, 72, "resources/RulesScreen/text_title_regras.png");
         textRules = new Picture(72, 211, "resources/RulesScreen/text_rules.png");
         textPressSpace = new Picture(26, 650, "resources/RulesScreen/text_space_continue.png");
+    }
+
+    //Getters && Setters
+    public boolean getRequestNext() {
+        return requestNext;
     }
 
     //Methods
@@ -27,6 +33,7 @@ public class RulesScreen implements Screen{
 
     @Override
     public void deleteScreen() {
+        requestNext = true;
         background.delete();
         textTitle.delete();
         textRules.delete();

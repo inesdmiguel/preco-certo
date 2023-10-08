@@ -10,6 +10,7 @@ public class StartScreen implements Screen {
     private Picture yellowButtonNormal;
     private Picture textStartButton;
     private Picture fernandoMendes;
+    private boolean requestNext;
 
     //Constructor
     public StartScreen()  {
@@ -19,6 +20,11 @@ public class StartScreen implements Screen {
         yellowButtonNormal = new Picture(500, 524, "resources/StartScreen/button_yellow_normal.png");
         textStartButton = new Picture(515, 534, "resources/StartScreen/text_start_button.png");
         fernandoMendes = new Picture (890, 130, "resources/StartScreen/image_fernando_mendes_bigger.png");
+    }
+
+    //Getters && Setters
+    public boolean getRequestNext() {
+        return requestNext;
     }
 
     //Methods
@@ -34,6 +40,7 @@ public class StartScreen implements Screen {
 
     @Override
     public void deleteScreen() {
+        requestNext = true;
         background.delete();
         textTitle.delete();
         textPressSpace.delete();

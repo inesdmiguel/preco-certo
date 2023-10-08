@@ -22,6 +22,7 @@ public class Round3 extends Round {
     private Picture priceC;
     private Picture priceD;
     private boolean correct;
+    private boolean requestNext;
 
 
     //Constructor
@@ -45,6 +46,11 @@ public class Round3 extends Round {
         priceD = new Picture(737, 644, "resources/Round3/text_price_D.png");
     }
 
+    //Getters && Setters
+    public boolean getRequestNext() {
+        return requestNext;
+    }
+
     //Methods
     public void showScreen() {
         background.draw();
@@ -63,6 +69,7 @@ public class Round3 extends Round {
     }
 
     public void deleteScreen() {
+        requestNext = true;
         background.delete();
         roundTitle.delete();
         product3.delete();

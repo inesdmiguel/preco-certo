@@ -1,5 +1,5 @@
 package org.academiadecodigo.jogo.Game;
-import org.academiadecodigo.jogo.Coins;
+import org.academiadecodigo.jogo.Coin;
 import org.academiadecodigo.jogo.FinalScreens.GameOver;
 import org.academiadecodigo.jogo.FinalScreens.WinScreen;
 import org.academiadecodigo.jogo.MontraFinal.GuessScreen;
@@ -19,7 +19,7 @@ import org.academiadecodigo.simplegraphics.keyboard.KeyboardHandler;
 public class Game implements KeyboardHandler{
     //Properties
     public Keyboard keyboard;
-    private Coins coins;
+    private Coin coins;
     boolean[] hasCoin;
     private int countCoins;
 
@@ -64,7 +64,6 @@ public class Game implements KeyboardHandler{
         createKeyboardEvents();
         startScreen = new StartScreen();
         rulesScreen = new RulesScreen();
-        coins = new Coins();
         round1 = new Round1();
         round2 = new Round2();
         round3 = new Round3();
@@ -76,12 +75,12 @@ public class Game implements KeyboardHandler{
         guessScreen = new GuessScreen();
         gameOver = new GameOver();
         winScreen = new WinScreen();
+        coins = new Coin();
         hasCoin = new boolean[5];
     }
 
     //Methods
     public void start() {
-        startScreen.showScreen();
         startScreen.showScreen();
         Sound.playSound("/Sound/game_intro.wav", 7000);
     }
@@ -134,17 +133,338 @@ public class Game implements KeyboardHandler{
     public void keyPressed(KeyboardEvent keyboardEvent) {
         switch (keyboardEvent.getKey()) {
             case KeyboardEvent.KEY_SPACE:
-                if (!spaceClicked) {
+                if (!startScreen.getRequestNext()) {
                     startScreen.deleteScreen();
                     rulesScreen.showScreen();
-                    spaceClicked = true;
-                } else if (!rightClicked) {
+                } else if (!rulesScreen.getRequestNext()) {
                     rulesScreen.deleteScreen();
                     round1.showScreen();
                     rightClicked = true;
                 }
                 break;
 
+            case KeyboardEvent.KEY_A:
+                if (rulesScreen.getRequestNext() && !round1.getRequestNext()) {
+                    round1.showOptionWrongA();
+                    System.out.println("passou round 1 incorreto");
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    round1.deleteScreen();
+                    round2.showScreen();
+                    break;
+                }
+
+                if (round1.getRequestNext() && !round2.getRequestNext()) {
+                    round2.showOptionCorrectA();
+                    Sound.playSound("/Sound/guessed_right.wav", 2200);
+                    System.out.println("passou round 2 correto");
+                    countCoins++;
+                    round2.deleteScreen();
+                    round3.showScreen();
+                    if (coins.isCoin1Won()) {
+                        coins.showCoin2();
+                    } else {
+                        coins.showCoin1();
+                    }
+                    break;
+                }
+
+                if (round2.getRequestNext() &&!round3.getRequestNext()) {
+                    round3.showOptionWrongA();
+                    System.out.println("passou round 3 incorreto");
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    round3.deleteScreen();
+                    round4.showScreen();
+                    if (coins.isCoin1Won() && !coins.isCoin2Won()) {
+                        coins.showCoin1();
+                    } else if (coins.isCoin2Won()) {
+                        coins.showCoin2();
+                    }
+                    break;
+                }
+
+                if (round3.getRequestNext() && !round4.getRequestNext()) {
+                    round4.showOptionWrongA();
+                    System.out.println("passou round 4 incorreto");
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    round4.deleteScreen();
+                    round5.showScreen();
+                    if (coins.isCoin1Won() && !coins.isCoin2Won()) {
+                        coins.showCoin1();
+                    } else if (coins.isCoin2Won() && !coins.isCoin3Won()) {
+                        coins.showCoin2();
+                    } else if (coins.isCoin3Won()) {
+                        coins.showCoin3();
+                    }
+                    break;
+                }
+
+                if (round4.getRequestNext() && !round5.getRequestNext()) {
+                    round5.showOptionWrongA();
+                    System.out.println("passou round 5 incorreto");
+                    if (countCoins >= 3) {
+                        round5.deleteScreen();
+                        montraFinalTitleScreen.showScreen();
+                        System.out.println("You have " + countCoins + " coins");
+                        System.out.println("Aparecimento da montra final");
+                    } else {
+                        Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                        round5.deleteScreen();
+                        gameOver.showScreen();
+                        System.out.println("You have " + countCoins + " coins");
+                        System.out.println("Não sabe o preço certo!");
+                        break;
+                    }
+                    break;
+                }
+
+                if (guessScreen.isOptionIncorrect(Options.A) && spaceClicked && rightClicked && passedRound5 && !gameEnd){
+                    gameEnd = true;
+                    gameOver.showScreen();
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                }
+
+                break;
+
+
+            case KeyboardEvent.KEY_B:
+                if (rulesScreen.getRequestNext() && !round1.getRequestNext()) {
+                    round1.showOptionWrongB();
+                    System.out.println("passou round 1 incorreto");
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    round1.deleteScreen();
+                    round2.showScreen();
+                    break;
+                }
+
+                if (round1.getRequestNext() && !round2.getRequestNext()) {
+                    round2.showOptionWrongB();
+                    System.out.println("passou round 2 incorreto");
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    round2.deleteScreen();
+                    round3.showScreen();
+                    if (coins.isCoin1Won()) {
+                        coins.showCoin1();
+                    }
+                    break;
+                }
+
+                if (round2.getRequestNext() && !round3.getRequestNext()) {
+                    round3.showOptionCorrectB();
+                    countCoins++;
+                    Sound.playSound("/Sound/guessed_right.wav", 2200);
+                    System.out.println("passou round 3 correto");
+                    round3.deleteScreen();
+                    round4.showScreen();
+                    if (!coins.isCoin1Won()) {
+                        coins.showCoin1();
+                    } else if (coins.isCoin1Won() && !coins.isCoin2Won()) {
+                        coins.showCoin2();
+                    } else if (coins.isCoin1Won() && coins.isCoin2Won()) {
+                        coins.showCoin1();
+                        coins.showCoin3();
+                    }
+                    break;
+                }
+
+                if (round3.getRequestNext() && !round4.getRequestNext()) {
+                    round4.showOptionWrongB();
+                    System.out.println("passou round 4 incorreto");
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    round4.deleteScreen();
+                    round5.showScreen();
+                    if (coins.isCoin1Won() && !coins.isCoin2Won()) {
+                        coins.showCoin1();
+                    } else if (coins.isCoin2Won() && !coins.isCoin3Won()) {
+                        coins.showCoin2();
+                    } else if (coins.isCoin3Won()) {
+                        coins.showCoin3();
+                    }
+                    break;
+                }
+
+                if (round4.getRequestNext() && !round5.getRequestNext()) {
+                    round5.showOptionWrongB();
+                    System.out.println("passou round 5 incorreto");
+                    if (countCoins >= 3) {
+                        round5.deleteScreen();
+                        coins.deleteAllCoins();
+                        montraFinalTitleScreen.showScreen();
+                        System.out.println("You have " + countCoins + " coins");
+                        System.out.println("Aparecimento da montra final");
+                    } else {
+                        round5.deleteScreen();
+                        coins.deleteAllCoins();
+                        Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                        gameOver.showScreen();
+                        System.out.println("You have " + countCoins + " coins");
+                        System.out.println("Não sabe o preço certo!");
+                        break;
+                    }
+
+                    if (guessScreen.isOptionIncorrect(Options.B) && spaceClicked && rightClicked && passedRound5 && !gameEnd){
+                        gameEnd = true;
+                        gameOver.showScreen();
+                        Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    }
+
+                    break;
+                }
+
+            case KeyboardEvent.KEY_C:
+                if (rulesScreen.getRequestNext() && !round1.getRequestNext()) {
+                    round1.showOptionCorrectC();
+                    countCoins++;
+                    Sound.playSound("/Sound/guessed_right.wav", 2200);
+                    System.out.println("passou round 1 correto");
+                    round1.deleteScreen();
+                    round2.showScreen();
+                    coins.showCoin1();
+                    break;
+                }
+
+                if (round1.getRequestNext() && !round2.getRequestNext()) {
+                    round2.showOptionWrongC();
+                    System.out.println("passou round 2 incorreto");
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    round2.deleteScreen();
+                    round3.showScreen();
+                    if (coins.isCoin1Won()) {
+                        coins.showCoin1();
+                    }
+                    break;
+                }
+
+                if (round2.getRequestNext() && !round3.getRequestNext()) {
+                    round3.showOptionWrongC();
+                    System.out.println("passou round 3 incorreto");
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    round3.deleteScreen();
+                    round4.showScreen();
+                    if (coins.isCoin1Won() && !coins.isCoin2Won()) {
+                        coins.showCoin1();
+                    } else if (coins.isCoin2Won() && !coins.isCoin3Won()) {
+                        coins.showCoin2();
+                    }
+                    break;
+                }
+
+                if (round3.getRequestNext() && !round4.getRequestNext()) {
+                    round4.showOptionWrongC();
+                    System.out.println("passou round 4 incorreto");
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    round4.deleteScreen();
+                    round5.showScreen();
+                    if (coins.isCoin1Won() && !coins.isCoin2Won()) {
+                        coins.showCoin1();
+                    }
+                    break;
+                }
+
+                if (round4.getRequestNext() && !round5.getRequestNext()) {
+                    round5.showOptionCorrectC();
+                    countCoins++;
+                    System.out.println("passou round 5 correto");
+                    Sound.playSound("/Sound/guessed_right.wav", 2200);
+                    if (countCoins >= 3) {
+                        round5.deleteScreen();
+                        coins.deleteAllCoins();
+                        montraFinalTitleScreen.showScreen();
+                        System.out.println("You have " + countCoins + " coins");
+                        System.out.println("Aparecimento da montra final");
+                    } else {
+                        round5.deleteScreen();
+                        coins.deleteAllCoins();
+                        Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                        gameOver.showScreen();
+                        System.out.println("You have " + countCoins + " coins");
+                        System.out.println("Não sabe o preço certo!");
+                        break;
+                    }
+                    break;
+                }
+
+                if (guessScreen.isOptionCorrect(Options.C) && spaceClicked && rightClicked && passedRound5 && !gameEnd){
+                    gameEnd = true;
+                    winScreen.showScreen();
+                    Sound.playSound("/Sound/espetaculo.wav", 3000);
+                }
+
+                break;
+
+            case KeyboardEvent.KEY_D:
+                if (rulesScreen.getRequestNext() && !round1.getRequestNext()) {
+                    round1.showOptionWrongD();
+                    System.out.println("passou round 1 incorreto");
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    round1.deleteScreen();
+                    round2.showScreen();
+                    break;
+                }
+
+                if (round1.getRequestNext() && !round2.getRequestNext()) {
+                    passedRound2 = true;
+                    round2.showOptionWrongD();
+                    System.out.println("passou round 2 incorreto");
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    round2.deleteScreen();
+                    round3.showScreen();
+                    break;
+                }
+                if (round2.getRequestNext() && !round3.getRequestNext()) {
+                    round3.showOptionWrongD();
+                    System.out.println("passou round 3 incorreto");
+                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    round3.deleteScreen();
+                    round4.showScreen();
+                    break;
+                }
+
+                if (round3.getRequestNext() && !round4.getRequestNext()) {
+                    round4.showOptionCorrectD();
+                    countCoins++;
+                    Sound.playSound("/Sound/guessed_right.wav", 2200);
+                    System.out.println("passou round 4 correto");
+                    round4.deleteScreen();
+                    round5.showScreen();
+                    if (!coins.isCoin1Won()) {
+                        coins.showCoin1();
+                    } else if (coins.isCoin1Won() && !coins.isCoin2Won()) {
+                        coins.showCoin2();
+                    } else if (coins.isCoin1Won() && coins.isCoin2Won() && !coins.isCoin3Won()) {
+                        coins.showCoin3();
+                    } else if (coins.isCoin1Won() && coins.isCoin2Won() && coins.isCoin3Won() && !coins.isCoin4Won()) {
+                        coins.showCoin4();
+                    }
+                    break;
+                }
+
+                if (round4.getRequestNext() && !round5.getRequestNext()) {
+                    round5.showOptionWrongD();
+                    System.out.println("passou round 5 incorreto");
+                    if (countCoins >= 3) {
+                        round5.deleteScreen();
+                        coins.deleteAllCoins();
+                        montraFinalTitleScreen.showScreen();
+                        System.out.println("You have " + countCoins + " coins");
+                        System.out.println("Aparecimento da montra final");
+                    } else {
+                        round5.deleteScreen();
+                        coins.deleteAllCoins();
+                        Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                        gameOver.showScreen();
+                        System.out.println("You have " + countCoins + " coins");
+                        System.out.println("Não sabe o preço certo!");
+                        break;
+                    }
+
+                    if(guessScreen.isOptionIncorrect(Options.D) && spaceClicked && rightClicked && passedRound5 && !gameEnd){
+                        gameEnd = true;
+                        gameOver.showScreen();
+                        Sound.playSound("/Sound/guessed_wrong.wav", 1000);
+                    }
+
+                    break;
+                }
             case KeyboardEvent.KEY_ENTER:
                 if(spaceClicked && rightClicked && passedRound5 && !enterClicked){
                     enterClicked = true;
@@ -172,269 +492,7 @@ public class Game implements KeyboardHandler{
                     guessScreen.showScreen();
                 }
                 break;
-            case KeyboardEvent.KEY_A:
-                if (round2.isOptionCorrect(Options.A) && spaceClicked && rightClicked && passedRound1 && !passedRound2) {
-                    passedRound2 = true;
-                    round2.showOptionCorrectA();
-                    Sound.playSound("/Sound/guessed_right.wav", 2200);
-                    System.out.println("passou round 2 correto");
-                    countCoins++;
-                    round2.deleteScreen();
-                    round3.showScreen();
-                    coins.showCoin2();
-                    break;
-                }
-                if (guessScreen.isOptionIncorrect(Options.A) && spaceClicked && rightClicked && passedRound5 && !gameEnd){
-                    gameEnd = true;
-                    gameOver.showScreen();
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                }
-                if (round1.isOptionIncorrect(Options.A) && spaceClicked && rightClicked && !passedRound1) {
-                    passedRound1 = true;
-                    System.out.println("passou round 1 incorreto");
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                    round1.deleteScreen();
-                    round2.showScreen();
-                    //round1.showOptionWrongA();
-                    break;
-                }
-                if (round3.isOptionIncorrect(Options.A) && spaceClicked && rightClicked && passedRound1 && passedRound2 && !passedRound3) {
-                    passedRound3 = true;
-                    System.out.println("passou round 3 incorreto");
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                    round3.deleteScreen();
-                    round4.showScreen();
-                    //round3.showOptionWrongA();
-                    break;
-                }
-                if (round4.isOptionIncorrect(Options.A) && spaceClicked && rightClicked && passedRound1 && passedRound2 && passedRound3 && !passedRound4) {
-                    passedRound4 = true;
-                    System.out.println("passou round 4 incorreto");
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                    round4.deleteScreen();
-                    round5.showScreen();
-                    // round4.showOptionWrongA();
-                    break;
-                }
-                if (round5.isOptionIncorrect(Options.A) && spaceClicked && rightClicked && passedRound1 && passedRound2 && passedRound3 && passedRound4 && !passedRound5) {
-                    passedRound5 = true;
-                    System.out.println("passou round 5 incorreto");
-                    if (countCoins >= 3) {
-                        round5.deleteScreen();
-                        montraFinalTitleScreen.showScreen();
-                        System.out.println("You have " + countCoins + " coins");
-                        System.out.println("Aparecimento da montra final");
-                    } else {
-                        Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                        round5.deleteScreen();
-                        gameOver.showScreen();
-                        System.out.println("You have " + countCoins + " coins");
-                        System.out.println("Não sabe o preço certo!");
-                        break;
-                    }
-                    //round5.showOptionWrongA();
-                    break;
-                }
-                break;
 
-            case KeyboardEvent.KEY_B:
-                //roundCorrectOptions();
-                if (guessScreen.isOptionIncorrect(Options.B) && spaceClicked && rightClicked && passedRound5 && !gameEnd){
-                    gameEnd = true;
-                    gameOver.showScreen();
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                }
-                if (round1.isOptionIncorrect(Options.B) && spaceClicked && rightClicked && !passedRound1) {
-                    passedRound1 = true;
-                    System.out.println("passou round 1 incorreto");
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                    round1.deleteScreen();
-                    round2.showScreen();
-                    //round2.showScreen();
-                    break;
-                }
-                if (round2.isOptionIncorrect(Options.B) && spaceClicked && rightClicked && passedRound1 && !passedRound2) {
-                    passedRound2 = true;
-                    System.out.println("passou round 2 incorreto");
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                    round2.deleteScreen();
-                    round3.showScreen();
-                    //round3.showScreen();
-                    break;
-                }
-                if (round3.isOptionCorrect(Options.B) && spaceClicked && rightClicked && passedRound1 && passedRound2 && !passedRound3) {  //Done
-                    passedRound3 = true;
-                    countCoins++;
-                    Sound.playSound("/Sound/guessed_right.wav", 2200);
-                    System.out.println("passou round 3 correto");
-                    round3.deleteScreen();
-                    round4.showScreen();
-                    coins.showCoin3();
-                    //round4.showScreen();
-                    break;
-                }
-                if (round4.isOptionIncorrect(Options.B) && spaceClicked && rightClicked && passedRound1 && passedRound2 && passedRound3 && !passedRound4) {
-                    passedRound4 = true;
-                    System.out.println("passou round 4 incorreto");
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                    round4.deleteScreen();
-                    round5.showScreen();
-                    //round5.showScreen();
-                    break;
-                }
-                if (round5.isOptionIncorrect(Options.B) && spaceClicked && rightClicked && passedRound1 && passedRound2 && passedRound3 && passedRound4 && !passedRound5) {
-                    // round6.showScreen();
-                    passedRound5 = true;
-                    System.out.println("passou round 5 incorreto");
-                    if (countCoins >= 3) {
-                        round5.deleteScreen();
-                        coins.deleteAllCoins();
-                        montraFinalTitleScreen.showScreen();
-                        System.out.println("You have " + countCoins + " coins");
-                        System.out.println("Aparecimento da montra final");
-                    } else {
-                        round5.deleteScreen();
-                        coins.deleteAllCoins();
-                        Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                        gameOver.showScreen();
-                        System.out.println("You have " + countCoins + " coins");
-                        System.out.println("Não sabe o preço certo!");
-                        break;
-                    }
-                    break;
-                }
-            case KeyboardEvent.KEY_C:
-                if (round5.isOptionCorrect(Options.C) && spaceClicked && rightClicked && passedRound1 && passedRound2 && passedRound3 && passedRound4 && !passedRound5) {
-                    //correct round 5
-                    passedRound5 = true;
-                    countCoins++;
-                    System.out.println("passou round 5 correto");
-                    Sound.playSound("/Sound/guessed_right.wav", 2200);
-                    if (countCoins >= 3) {
-                        round5.deleteScreen();
-                        coins.deleteAllCoins();
-                        montraFinalTitleScreen.showScreen();
-                        System.out.println("You have " + countCoins + " coins");
-                        System.out.println("Aparecimento da montra final");
-                    } else {
-                        round5.deleteScreen();
-                        coins.deleteAllCoins();
-                        Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                        gameOver.showScreen();
-                        System.out.println("You have " + countCoins + " coins");
-                        System.out.println("Não sabe o preço certo!");
-                        break;
-                    }
-                    break;
-                }
-                if (guessScreen.isOptionCorrect(Options.C) && spaceClicked && rightClicked && passedRound5 && !gameEnd){
-                    gameEnd = true;
-                    winScreen.showScreen();
-                    Sound.playSound("/Sound/espetaculo.wav", 3000);
-                }
-                if (round1.isOptionCorrect(Options.C) && spaceClicked && rightClicked && !passedRound1) {
-                    //correct round 1
-                    passedRound1 = true;
-                    countCoins++;
-                    Sound.playSound("/Sound/guessed_right.wav", 2200);
-                    System.out.println("passou round 1 correto");
-                    round1.deleteScreen();
-                    round2.showScreen();
-                    coins.showCoin1();
-                    break;
-                }
-                if (round2.isOptionIncorrect(Options.C) && spaceClicked && rightClicked && passedRound1 && !passedRound2) {
-                    passedRound2 = true;
-                    System.out.println("passou round 2 incorreto");
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                    round2.deleteScreen();
-                    round3.showScreen();
-                    //round2.showOptionWrongC();
-                    break;
-                }
-                if (round3.isOptionIncorrect(Options.C) && spaceClicked && rightClicked && passedRound1 && passedRound2 && !passedRound3) {
-                    passedRound3 = true;
-                    System.out.println("passou round 3 incorreto");
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                    round3.deleteScreen();
-                    round4.showScreen();
-                    //round3.showOptionWrongC();
-                    break;
-                }
-                if (round4.isOptionIncorrect(Options.C) && spaceClicked && rightClicked && passedRound1 && passedRound2 && passedRound3 && !passedRound4) {
-                    passedRound4 = true;
-                    System.out.println("passou round 4 incorreto");
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                    round4.deleteScreen();
-                    round5.showScreen();
-                    //round4.showOptionWrongC();
-                    break;
-                }
-                break;
-
-            case KeyboardEvent.KEY_D:
-                if(guessScreen.isOptionIncorrect(Options.D) && spaceClicked && rightClicked && passedRound5 && !gameEnd){
-                    gameEnd = true;
-                    gameOver.showScreen();
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                }
-                if (round1.isOptionIncorrect(Options.D) && spaceClicked && rightClicked && !passedRound1) {
-                    passedRound1 = true;
-                    System.out.println("passou round 1 incorreto");
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                    round1.deleteScreen();
-                    round2.showScreen();
-                    //round5.showScreen();
-                    break;
-                }
-                if (round2.isOptionIncorrect(Options.D) && spaceClicked && rightClicked && passedRound1 && !passedRound2) {
-                    passedRound2 = true;
-                    System.out.println("passou round 2 incorreto");
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                    round2.deleteScreen();
-                    round3.showScreen();
-                    //round3.showScreen();
-                    break;
-                }
-                if (round3.isOptionIncorrect(Options.D) && spaceClicked && rightClicked && passedRound1 && passedRound2 && !passedRound3) {  //Done
-                    passedRound3 = true;
-                    System.out.println("passou round 3 incorreto");
-                    Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                    round3.deleteScreen();
-                    round4.showScreen();
-                    //round4.showScreen();
-                    break;
-                }
-                if (round4.isOptionCorrect(Options.D) && spaceClicked && rightClicked && passedRound1 && passedRound2 && passedRound3 && !passedRound4) {
-                    passedRound4 = true;
-                    countCoins++;
-                    Sound.playSound("/Sound/guessed_right.wav", 2200);
-                    System.out.println("passou round 4 correto");
-                    round4.deleteScreen();
-                    round5.showScreen();
-                    coins.showCoin4();
-                    break;
-                }
-                if (round5.isOptionIncorrect(Options.D) && spaceClicked && rightClicked && passedRound1 && passedRound2 && passedRound3 && passedRound4 && !passedRound5) {
-                    passedRound5 = true;
-                    System.out.println("passou round 5 incorreto");
-                    if (countCoins >= 3) {
-                        round5.deleteScreen();
-                        coins.deleteAllCoins();
-                        montraFinalTitleScreen.showScreen();
-                        System.out.println("You have " + countCoins + " coins");
-                        System.out.println("Aparecimento da montra final");
-                    } else {
-                        round5.deleteScreen();
-                        coins.deleteAllCoins();
-                        Sound.playSound("/Sound/guessed_wrong.wav", 1000);
-                        gameOver.showScreen();
-                        System.out.println("You have " + countCoins + " coins");
-                        System.out.println("Não sabe o preço certo!");
-                        break;
-                    }
-                    break;
-                }
             case KeyboardEvent.KEY_RIGHT:
                 if (productScreen.isProduct1Showing()){
                     productScreen.setProduct1Showing(false);
@@ -518,7 +576,7 @@ public class Game implements KeyboardHandler{
     public void keyReleased(KeyboardEvent keyboardEvent) {
     }
 
-    public void passFinalRound() {
+    public void goToFinalRound() {
         for (int i = 0; i < hasCoin.length; i++) {
             if (hasCoin[i] == true) {
                 countCoins++;
