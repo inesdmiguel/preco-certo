@@ -42,22 +42,6 @@ public class Game implements KeyboardHandler{
     private GameOver gameOver;
     private WinScreen winScreen;
 
-    //Booleans
-    private boolean rightClicked;
-    private boolean spaceClicked;
-    private boolean passedRound1;
-    private boolean passedRound2;
-    private boolean passedRound3;
-    private boolean passedRound4;
-    private boolean passedRound5;
-    private boolean enterClicked;
-    private boolean passedMargemErro;
-    private boolean choosedMargemErro;
-    private boolean productChoosed;
-    private boolean showingMargemErro;
-    private boolean gameEnd;
-
-
     //Constructor
     public Game() {
         keyboard = new Keyboard(this);
@@ -139,7 +123,6 @@ public class Game implements KeyboardHandler{
                 } else if (!rulesScreen.getRequestNext()) {
                     rulesScreen.deleteScreen();
                     round1.showScreen();
-                    rightClicked = true;
                 }
                 break;
 
@@ -168,7 +151,7 @@ public class Game implements KeyboardHandler{
                     break;
                 }
 
-                if (round2.getRequestNext() &&!round3.getRequestNext()) {
+                if (round2.getRequestNext() && !round3.getRequestNext()) {
                     round3.showOptionWrongA();
                     System.out.println("passou round 3 incorreto");
                     Sound.playSound("/Sound/guessed_wrong.wav", 1000);
@@ -217,12 +200,10 @@ public class Game implements KeyboardHandler{
                     break;
                 }
 
-                if (guessScreen.isOptionIncorrect(Options.A) && spaceClicked && rightClicked && passedRound5 && !gameEnd){
-                    gameEnd = true;
+                if (productScreen.getRequestNext() && !guessScreen.getRequestNext()) {
                     gameOver.showScreen();
                     Sound.playSound("/Sound/guessed_wrong.wav", 1000);
                 }
-
                 break;
 
 
@@ -301,8 +282,7 @@ public class Game implements KeyboardHandler{
                         break;
                     }
 
-                    if (guessScreen.isOptionIncorrect(Options.B) && spaceClicked && rightClicked && passedRound5 && !gameEnd){
-                        gameEnd = true;
+                    if (productScreen.getRequestNext() && !guessScreen.getRequestNext()) {
                         gameOver.showScreen();
                         Sound.playSound("/Sound/guessed_wrong.wav", 1000);
                     }
@@ -383,8 +363,7 @@ public class Game implements KeyboardHandler{
                     break;
                 }
 
-                if (guessScreen.isOptionCorrect(Options.C) && spaceClicked && rightClicked && passedRound5 && !gameEnd){
-                    gameEnd = true;
+                if (productScreen.getRequestNext() && !guessScreen.getRequestNext()) {
                     winScreen.showScreen();
                     Sound.playSound("/Sound/espetaculo.wav", 3000);
                 }
@@ -402,7 +381,6 @@ public class Game implements KeyboardHandler{
                 }
 
                 if (round1.getRequestNext() && !round2.getRequestNext()) {
-                    passedRound2 = true;
                     round2.showOptionWrongD();
                     System.out.println("passou round 2 incorreto");
                     Sound.playSound("/Sound/guessed_wrong.wav", 1000);
@@ -457,8 +435,7 @@ public class Game implements KeyboardHandler{
                         break;
                     }
 
-                    if(guessScreen.isOptionIncorrect(Options.D) && spaceClicked && rightClicked && passedRound5 && !gameEnd){
-                        gameEnd = true;
+                    if(productScreen.getRequestNext() && !guessScreen.getRequestNext()) {
                         gameOver.showScreen();
                         Sound.playSound("/Sound/guessed_wrong.wav", 1000);
                     }
@@ -466,108 +443,108 @@ public class Game implements KeyboardHandler{
                     break;
                 }
             case KeyboardEvent.KEY_ENTER:
-                if(spaceClicked && rightClicked && passedRound5 && !enterClicked){
-                    enterClicked = true;
+                if(round5.getRequestNext() && !montraFinalTitleScreen.getRequestNext()) {
+                    montraFinalTitleScreen.deleteScreen();
                     margemDeErroScreen.showScreen();
                     System.out.println("margem de erro");
                     break;
                 }
-                else if (spaceClicked && rightClicked && passedRound5 && !passedMargemErro){
-                    passedMargemErro = true;
+
+                else if (montraFinalTitleScreen.getRequestNext() && !margemDeErroScreen.getHasChosenMargin()) {
                     margemDeErroScreen.chooseMargin();
                     System.out.println("escolheu margem erro");
+                    break;
                 }
-                else if (spaceClicked && rightClicked && passedRound5 && !showingMargemErro && !choosedMargemErro){
-                    choosedMargemErro = true;
-                    showingMargemErro = true;
-                    margemDeErroScreen.clickYellowButton();
-                    System.out.println("aparece margem");
-                }
-                else if (spaceClicked && rightClicked && passedRound5 && choosedMargemErro && showingMargemErro && !productChoosed){
-                    productChoosed = true;
+
+                else if (margemDeErroScreen.getHasChosenMargin() && !margemDeErroScreen.getRequestNext()) {
+                    margemDeErroScreen.deleteScreen();
                     productScreen.showScreen();
                     System.out.println("aparecem produtos");
+                    break;
                 }
-                else if (spaceClicked && rightClicked && productChoosed){
+
+                else if (margemDeErroScreen.getRequestNext() && !productScreen.getRequestNext()) {
+                    productScreen.deleteScreen();
                     guessScreen.showScreen();
+                    break;
                 }
+
                 break;
 
             case KeyboardEvent.KEY_RIGHT:
                 if (productScreen.isProduct1Showing()){
-                    productScreen.setProduct1Showing(false);
                     productScreen.deleteProduct1();
                     productScreen.showProduct2();
-                    System.out.println("aparece produto 2");
+                    System.out.println("Product 2 appears.");
                     break;
                 }
+
                 if (productScreen.isProduct2Showing()){
-                    productScreen.setProduct2Showing(false);
                     productScreen.deleteProduct2();
                     productScreen.showProduct3();
-                    System.out.println("aparece produto 3");
+                    System.out.println("Product 3 appears.");
                     break;
                 }
+
                 if (productScreen.isProduct3Showing()){
-                    productScreen.setProduct3Showing(false);
                     productScreen.deleteProduct3();
                     productScreen.showProduct4();
-                    System.out.println("aparece produto 4");
+                    System.out.println("Product 4 appears.");
                     break;
                 }
+
                 if (productScreen.isProduct4Showing()){
-                    productScreen.setProduct4Showing(false);
                     productScreen.deleteProduct4();
                     productScreen.showProduct5();
-                    System.out.println("aparece produto 5");
+                    System.out.println("Product 5 appears.");
                     break;
                 }
+
                 if (productScreen.isProduct5Showing()){
-                    productScreen.setProduct5Showing(false);
                     productScreen.deleteProduct5();
                     productScreen.showProduct6();
-                    System.out.println("aparece produto 6");
+                    System.out.println("Product 6 appears.");
                     break;
                 }
                 if (productScreen.isProduct6Showing()){
-                    productScreen.setProduct6Showing(false);
                     productScreen.deleteProduct5();
                     productScreen.showProduct6();
-                    System.out.println("nao devia acontecer nada");
+                    System.out.println("Nothing happens.");
                     break;
                 }
+                break;
+
             case KeyboardEvent.KEY_LEFT:
                 if (productScreen.isProduct6Showing()){
-                    productScreen.setProduct6Showing(false);
                     productScreen.deleteProduct6();
                     productScreen.showProduct5();
                     break;
                 }
+
                 if (productScreen.isProduct5Showing()){
-                    productScreen.setProduct5Showing(false);
                     productScreen.deleteProduct5();
                     productScreen.showProduct4();
                     break;
                 }
+
                 if (productScreen.isProduct4Showing()){
-                    productScreen.setProduct4Showing(false);
                     productScreen.deleteProduct4();
                     productScreen.showProduct3();
                     break;
                 }
+
                 if (productScreen.isProduct3Showing()){
-                    productScreen.setProduct3Showing(false);
                     productScreen.deleteProduct3();
                     productScreen.showProduct2();
                     break;
                 }
+
                 if (productScreen.isProduct2Showing()){
-                    productScreen.setProduct2Showing(false);
                     productScreen.deleteProduct2();
                     productScreen.showProduct1();
                     break;
                 }
-
+            break;
         }
 
     }

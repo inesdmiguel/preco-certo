@@ -7,12 +7,18 @@ public class MontraFinalTitleScreen implements Screen {
     private Picture background;
     private Picture titleMontraFinal;
     private Picture textPressEnter;
+    private boolean requestNext;
 
     //Constructor
     public MontraFinalTitleScreen() {
         background = new Picture(10, 10, "resources/MontraFinal/TitleScreen/picture_background_montra_final_title.png");
         titleMontraFinal = new Picture(267, 163, "resources/MontraFinal/TitleScreen/text_title_montra_final.png");
         textPressEnter = new Picture(26, 650, "resources/MontraFinal/TitleScreen/text_press_space_montra.png");
+    }
+
+    //Getters && Setters
+    public boolean getRequestNext() {
+        return requestNext;
     }
 
     //Methods
@@ -25,6 +31,7 @@ public class MontraFinalTitleScreen implements Screen {
 
     @Override
     public void deleteScreen() {
+        requestNext = true;
         background.delete();
         titleMontraFinal.delete();
         textPressEnter.delete();

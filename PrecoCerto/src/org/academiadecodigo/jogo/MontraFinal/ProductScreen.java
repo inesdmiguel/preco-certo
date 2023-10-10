@@ -27,6 +27,7 @@ public class ProductScreen implements Screen {
     private boolean product4Showing;
     private boolean product5Showing;
     private boolean product6Showing;
+    private boolean requestNext;
 
 
     //Constructor
@@ -72,6 +73,10 @@ public class ProductScreen implements Screen {
         return product6Showing;
     }
 
+    public boolean getRequestNext() {
+        return requestNext;
+    }
+
     public void setProduct1Showing(boolean product1Showing) {
         this.product1Showing = product1Showing;
     }
@@ -110,6 +115,7 @@ public class ProductScreen implements Screen {
 
     @Override
     public void deleteScreen() {
+        requestNext = true;
         background.delete();
         title.delete();
         buttonGuess.delete();
@@ -159,26 +165,32 @@ public class ProductScreen implements Screen {
 
     //Methods to delete products
     public void deleteProduct1() {
+        product1Showing = false;
         imageDuck.delete();
     }
 
     public void deleteProduct2() {
+        product2Showing = false;
         imageToy.delete();
     }
 
     public void deleteProduct3() {
+        product3Showing = false;
         imageMagalhães.delete();
     }
 
     public void deleteProduct4() {
+        product4Showing = false;
         imageTrotinete.delete();
     }
 
     public void deleteProduct5() {
+        product5Showing = false;
         imageViagem.delete();
     }
 
     public void deleteProduct6() {
+        product6Showing = false;
         imageGomas.delete();
     }
 }

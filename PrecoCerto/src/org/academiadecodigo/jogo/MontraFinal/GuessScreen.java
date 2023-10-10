@@ -11,6 +11,7 @@ public class GuessScreen implements Screen {
     private Picture title;
     private Picture whiteBackground;
     private Picture productList;
+    private boolean requestNext;
 
     //Unclicked Yellow Buttons
     private Picture yellowButtonUnclickedA;
@@ -66,6 +67,11 @@ public class GuessScreen implements Screen {
         priceOptionD = new Picture(956, 615, "resources/MontraFinal/GuessScreen/text_option_D.png");
     }
 
+    //Getters && Setters
+    public boolean getRequestNext() {
+        return requestNext;
+    }
+
     //Methods
     @Override
     public void showScreen() {
@@ -85,6 +91,7 @@ public class GuessScreen implements Screen {
 
     @Override
     public void deleteScreen() {
+        requestNext = true;
         background.delete();
         whiteBackground.delete();
         productList.delete();

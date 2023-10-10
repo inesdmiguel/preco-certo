@@ -28,6 +28,8 @@ public class MargemDeErroScreen implements Screen {
     private Picture text30;
     private Picture text50;
     private Picture text100;
+    private boolean requestNext;
+    private boolean hasChosenMargin;
 
     private int[] marginValues = {5, 10, 25, 30, 50, 100};
 
@@ -58,6 +60,15 @@ public class MargemDeErroScreen implements Screen {
         greyBox100 = new Picture(474, 194, "resources/MontraFinal/MargemDeErro/grey_box.png");
     }
 
+    //Getters && Setters
+    public boolean getRequestNext() {
+        return requestNext;
+    }
+
+    public boolean getHasChosenMargin() {
+        return hasChosenMargin;
+    }
+
     //Methods
     @Override
     public void showScreen() {
@@ -81,6 +92,7 @@ public class MargemDeErroScreen implements Screen {
 
     @Override
     public void deleteScreen() {
+        requestNext = true;
         background.delete();
         title.delete();
         yellowButtonUnclicked.delete();
@@ -111,6 +123,7 @@ public class MargemDeErroScreen implements Screen {
     }
 
     public void chooseMargin() {
+        hasChosenMargin = true;
         switch (randomMargin()) {
             case 5:
                 greyBox10.draw();
